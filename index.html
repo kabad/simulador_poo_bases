@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulador POO – Objetos, Estado y UML Dinámico</title>
+  <meta name="description" content="Simulador educativo para comprender abstracción, clases, objetos, atributos, métodos y UML dinámico con retroalimentación educativa.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root{
+      --primary:#1976d2;
+      --secondary:#455a64;
+      --bg:#f4f6f8;
+      --panel:#ffffff;
+      --border:#cfd8dc;
+      --feedback:#e3f2fd;
+    }
+    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
+    body{margin:0;background:var(--bg);}
+    header{background:var(--primary);color:#fff;padding:1rem;text-align:center;}
+    main{display:grid;grid-template-columns:1fr 2fr 1fr;gap:1rem;padding:1rem;}
+    section{background:var(--panel);border-radius:8px;padding:1rem;border:1px solid var(--border);overflow:auto;}
+    h2{margin-top:0;color:var(--primary);}
+    label{font-size:.85rem;margin-top:.4rem;display:block;}
+    input,select,button{
+      width:100%;padding:.4rem;margin-top:.2rem;font-size:.9rem;
+    }
+    button{
+      background:var(--primary);color:#fff;border:none;border-radius:4px;
+      cursor:pointer;margin-top:.5rem;
+    }
+    button.secondary{background:var(--secondary);}
+    button.success{background:#2e7d32;}
+    button:hover{opacity:.9;}
+
+    .uml{border:1px solid #000;border-radius:4px;font-size:.85rem;margin-bottom:1rem;}
+    .uml .title{background:#e3f2fd;font-weight:bold;text-align:center;padding:.3rem;border-bottom:1px solid #000;}
+    .uml .section{padding:.3rem;border-bottom:1px solid #000;}
+    .uml .section:last-child{border-bottom:none;}
+
+    .objectBox{
+      border:1px dashed #000;
+      padding:.5rem;
+      margin-bottom:.6rem;
+      font-size:.85rem;
+      background:#fafafa;
+    }
+
+    .console{
+      background:#111;color:#0f0;font-family:monospace;
+      padding:.5rem;height:140px;overflow:auto;font-size:.8rem;
+    }
+
+    .feedbackBox{
+      background:var(--feedback);
+      border-left:4px solid var(--primary);
+      padding:.7rem;
+      font-size:.9rem;
+      margin-bottom:1rem;
+    }
+
+    .tip{
+      background:#fff;
+      border:1px dashed var(--primary);
+      padding:.5rem;
+      font-size:.8rem;
+      margin-top:.5rem;
+    }
+
+    @media(max-width:900px){
+      main{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>🧠 Simulador Educativo de Programación Orientada a Objetos</h1>
+  <p>Abstracción • Clases • Objetos • Atributos • Métodos</p>
+</header>
+
+<main>
+
+<!-- CONTROLES -->
+<section>
+  <h2>1️⃣ Definir Clase</h2>
+  <label>Nombre de la clase</label>
+  <input id="className">
+  <button onclick="createClass()">Crear clase</button>
+
+  <h2>2️⃣ Atributo</h2>
+  <label>Nombre</label>
+  <input id="attrName">
+  <label>Tipo</label>
+  <select id="attrType">
+    <option>int</option>
+    <option>double</option>
+    <option>boolean</option>
+    <option>String</option>
+  </select>
+  <label>Visibilidad</label>
+  <select id="attrVis">
+    <option>public</option>
+    <option>private</option>
+    <option>protected</option>
+  </select>
+  <button onclick="addAttribute()">Agregar atributo</button>
+
+  <h2>3️⃣ Método</h2>
+  <label>Nombre</label>
+  <input id="methodName">
+  <label>Retorno</label>
+  <select id="methodReturn">
+    <option>void</option>
+    <option>int</option>
+    <option>double</option>
+    <option>boolean</option>
+    <option>String</option>
+  </select>
+  <label>Visibilidad</label>
+  <select id="methodVis">
+    <option>public</option>
+    <option>private</option>
+    <option>protected</option>
+  </select>
+  <button onclick="addMethod()">Agregar método</button>
+
+  <button class="secondary" onclick="loadExample()">Ejemplo: Coche</button>
+</section>
+
+<!-- VISUALIZACIÓN -->
+<section>
+  <h2>📐 UML de Clase</h2>
+  <div id="umlClass"></div>
+
+  <h2>🚗 Crear Objeto</h2>
+  <div id="constructorForm"></div>
+  <button class="success" onclick="instantiateObject()">Instanciar objeto</button>
+
+  <h2>📦 Objetos creados</h2>
+  <div id="objectsContainer"></div>
+</section>
+
+<!-- FEEDBACK EDUCATIVO -->
+<section>
+  <h2>🎓 Feedback Educativo</h2>
+
+  <div class="feedbackBox" id="feedback">
+    Inicia creando una clase. Una clase es una abstracción que describe objetos del mundo real.
+  </div>
+
+  <div class="tip">
+    <strong>💡 Consejo didáctico:</strong><br>
+    Un buen atributo representa una característica común a todos los objetos de la clase.
+  </div>
+
+  <div class="tip">
+    <strong>🔐 Encapsulación:</strong><br>
+    Usa <em>private</em> para proteger el estado interno y accede mediante métodos.
+  </div>
+
+  <h2>🖥️ Consola</h2>
+  <div id="console" class="console"></div>
+</section>
+
+</main>
+
+<script>
+let currentClass=null;
+let objectList=[];
+let objectId=1;
+
+function log(msg){
+  const c=document.getElementById("console");
+  c.innerHTML+=msg+"<br>";
+  c.scrollTop=c.scrollHeight;
+}
+
+function setFeedback(text){
+  document.getElementById("feedback").innerText=text;
+}
+
+function createClass(){
+  const name=className.value.trim();
+  if(!name){alert("Nombre requerido");return;}
+  currentClass={name,attributes:[],methods:[]};
+  objectList=[];objectId=1;
+  log("Clase creada: "+name);
+  setFeedback("Has creado una CLASE. Representa una abstracción del mundo real.");
+  renderUML();renderConstructorForm();renderObjects();
+}
+
+function addAttribute(){
+  if(!currentClass){alert("Crea la clase primero");return;}
+  currentClass.attributes.push({
+    name:attrName.value,type:attrType.value,vis:attrVis.value
+  });
+  log("Atributo agregado");
+  setFeedback("Los ATRIBUTOS definen el estado que tendrá cada objeto.");
+  renderUML();renderConstructorForm();
+}
+
+function addMethod(){
+  if(!currentClass){alert("Crea la clase primero");return;}
+  currentClass.methods.push({
+    name:methodName.value,returnType:methodReturn.value,vis:methodVis.value
+  });
+  log("Método agregado");
+  setFeedback("Los MÉTODOS representan el comportamiento de los objetos.");
+  renderUML();
+}
+
+function renderUML(){
+  if(!currentClass){umlClass.innerHTML="";return;}
+  let html=`<div class="uml">
+    <div class="title">${currentClass.name}</div>
+    <div class="section">`;
+  currentClass.attributes.forEach(a=>{
+    const v=a.vis==="public"?"+":a.vis==="private"?"-":"#";
+    html+=`${v} ${a.name} : ${a.type}<br>`;
+  });
+  html+=`</div><div class="section">`;
+  currentClass.methods.forEach(m=>{
+    const v=m.vis==="public"?"+":m.vis==="private"?"-":"#";
+    html+=`${v} ${m.name}() : ${m.returnType}<br>`;
+  });
+  html+=`</div></div>`;
+  umlClass.innerHTML=html;
+}
+
+function renderConstructorForm(){
+  if(!currentClass){constructorForm.innerHTML="";return;}
+  let html="<strong>Valores iniciales del objeto</strong>";
+  currentClass.attributes.forEach((a,i)=>{
+    html+=`
+      <label>${a.name} (${a.type})</label>
+      <input id="ctor_${i}">
+    `;
+  });
+  constructorForm.innerHTML=html;
+}
+
+function instantiateObject(){
+  if(!currentClass)return;
+  let state=[];
+  currentClass.attributes.forEach((a,i)=>{
+    state.push({
+      name:a.name,type:a.type,value:document.getElementById("ctor_"+i).value
+    });
+  });
+  objectList.push({id:objectId++,state});
+  log("Objeto instanciado");
+  setFeedback("Has creado un OBJETO. Es una instancia concreta de la clase.");
+  renderObjects();
+}
+
+function renderObjects(){
+  const container=document.getElementById("objectsContainer");
+  container.innerHTML="";
+  if(objectList.length===0){
+    container.innerHTML="<em>No hay objetos creados.</em>";
+    return;
+  }
+  objectList.forEach(o=>{
+    let html=`<div class="objectBox">
+      <strong>${currentClass.name} #${o.id}</strong><br>`;
+    o.state.forEach(s=>{
+      html+=`${s.name} = ${s.value}<br>`;
+    });
+    html+=`</div>`;
+    container.innerHTML+=html;
+  });
+}
+
+function loadExample(){
+  className.value="Coche";
+  createClass();
+  attrName.value="color";attrType.value="String";attrVis.value="public";addAttribute();
+  attrName.value="velocidad";attrType.value="int";attrVis.value="private";addAttribute();
+  methodName.value="acelerar";methodReturn.value="void";methodVis.value="public";addMethod();
+  setFeedback("Ejemplo cargado. Observa cómo el UML guía la creación de objetos.");
+}
+</script>
+
+</body>
+</html>
+
