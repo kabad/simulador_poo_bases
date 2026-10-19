@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>Document</title>
+   <style>
+  
+  </style>
+</head>
+
+<body>
+   <header>
+      <h1>Titulo principal de la pagina</h1>
+   </header>
+   <nav>
+      <a href="index.html" title="ir al inicio">Inicio</a>
+      <a href="productos.html" title="ir a productos">Productos</a>
+      <a href="servicios.html" title="ir a servicios" target="_blank">Servicios</a>
+      <a href="contacto.html" title="ir a contacto">Contacto</a>
+   </nav>
+   <!--Contenedor para uso de selectores combinadores-->
+   <div class="contenedor">
+      <p>Este parrafo esta dentro del contenedor (hijo directo)</p>
+      <div>
+         <p>Este parrafo esta dentro de un div que esta dentro del contenedor (descendiente)</p>
+         <p>
+            Este parrafo tambien esta dentro de un div que esta dentro del contenedor
+            <a href="#">UN enlace</a>
+         </p>
+
+      </div>
+   </div>
+   <p>Este parrafo esta fuera del contenedor</p>
+   <!--selectores combinadores de hermanos-->
+   <section>
+      <h2 class="titulo">Titulo de seccion</h2>
+      <p>Primer parrafo de la seccion (hermando adyacente de h2)</p>
+      <p>Segundo parrafo de la seccion (hermano general de h2)</p>
+      <p>Tercer parrafo de la seccion (hermano general de h2)</p>
+   </section>
+   <section>
+      <h2 class="titulo">Titulo de seccion</h2>
+      <ul class="lista">
+         <li>Primer elemento</li>
+         <li>Segundo elemento</li>
+         <li>Tercer elemento</li>
+         <li>Cuarto elemento</li>
+         <li>Quinto elemento</li>
+      </ul>
+
+   </section>
+
+   <section class="textos">
+      <h2 class="titulo">Titulo de seccion</h2>
+      <p>Texto dentro de un parrafo Texto dentro de un parrafo Texto dentro de un parrafo Texto dentro de un parrafo
+         Texto dentro de un parrafo </p>
+      <p>Texto dentro de un parrafo Texto dentro de un parrafo Texto dentro de un parrafo Texto dentro de un parrafo
+         Texto dentro de un parrafo </p>
+      <p>Texto dentro de un parrafo Texto dentro de un parrafo Texto dentro de un parrafo Texto dentro de un parrafo
+         Texto dentro de un parrafo </p>
+   </section>
+
+   <p>Texto dentro de un parrafo Texto dentro de un parrafo Texto dentro de un parrafo Texto dentro de un parrafo Texto
+      dentro de un parrafo </p>
+
+   <ul>
+      <li>uno</li>
+      <li>dos</li>
+      <li>tres</li>
+   </ul>
+
+   <footer>
+      <div>
+         <a href="http://www.facebook.com" title="Facebook">Facebook</a>
+         <a href="http://www.toutube.com" title="Youtube">canal en Youtube</a>
+      </div>
+   </footer>
+
+</body>
+
+</html>
